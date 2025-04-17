@@ -1,3 +1,13 @@
+import requests
+import time
+import uuid
+import base64
+
+SNAPTRADE_CLIENT_ID = 'GEAR3DPRINTING-TEST-DVGSO'
+SNAPTRADE_CONSUMER_SECRET = '2EMTB2wM8jCAjohKB2NCRGH9viJxi10rGV6ZwFL9cqlH9yXK48'
+SNAPTRADE_BASE_URL = 'https://api.snaptrade.com/api/v1'
+
+
 from flask import Flask, request, jsonify
 import os
 
@@ -17,3 +27,24 @@ def webhook():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+
+@app.route('/connect', methods=['GET'])
+def generate_snaptrade_connect_url():
+    user_id = f"user-{uuid.uuid4()}"  # create unique user ID
+
+    # Prepare the base64-encoded authorization
+    prehash = f"{SNAPTRADE_CLIENT_ID}:{SNAPTRADE_CONSUMER_SECRET}"
+    basic_auth = base64.b64encode(prehash.encode()).decode()
+
+    headers = {
+        "Authorization": f"Basic {basic_auth}"
+    }
+
+    # Create SnapTrade Connect URL
+    connect_url = f"https://snaptrade.com/connect?clientId={SNAPTRADE_CLIENT_ID}&userId={user_id}"
+
+    return {
+        "connect_url": connect_url,
+        "userId": user_id
+    }
