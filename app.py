@@ -24,6 +24,29 @@ def webhook():
 
     return jsonify({"status": "success", "message": "Webhook received!"}), 200
 
+
+@app.route('/register', methods=['GET'])
+def register_snaptrade_user():
+    user_id = request.args.get("userId")
+
+    if not user_id:
+        return {"error": "Missing userId in query string"}, 400
+
+    url = f"{SNAPTRADE_BASE_URL}/snapTrade/register"
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "clientId": SNAPTRADE_CLIENT_ID,
+        "consumerSecret": SNAPTRADE_CONSUMER_SECRET
+    }
+    payload = {
+        "userId": user_id
+    }
+
+    r = requests.post(url, json=payload, headers=headers)
+    return r.json()
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
@@ -48,3 +71,5 @@ def generate_snaptrade_connect_url():
         "connect_url": connect_url,
         "userId": user_id
     }
+
+
