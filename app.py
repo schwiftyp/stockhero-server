@@ -43,8 +43,8 @@ def register_snaptrade_user():
         "userId": user_id
     }
 
-    r = requests.post(url, json=payload, headers=headers)
-    return r.json()
+    response = requests.post(url, headers=headers, json=payload)
+    return response.json()
 
 
 if __name__ == '__main__':
